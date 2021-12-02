@@ -4,3 +4,16 @@
 .env
 .env.development
 .env.test
+
+#husky
+.husky
+
+#eslint
+.eslintrc.json
+.eslintignore
+
+#babel
+.babelrc.json
+
+#coverage
+/coverage
