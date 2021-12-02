@@ -20,4 +20,17 @@ async function postRecommendation(req, res, next) {
     }
 }
 
-export { postRecommendation };
+async function upVote(req, res, next) {
+    try {
+        const { id } = req.params;
+        await recommendationServices.upVote(id);
+        return res.sendStatus(201);
+    } catch (error) {
+        if (error.type === 'NotFound') {
+            return res.sendStatus(404);
+        }
+        return next(error);
+    }
+}
+
+export { postRecommendation, upVote };

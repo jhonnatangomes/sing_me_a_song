@@ -20,6 +20,16 @@ async function getRecommendationByLink(youtubeLink) {
     return result.rows[0];
 }
 
+async function getRecommendationById(id) {
+    const result = await connection.query(
+        `
+        SELECT * FROM recommendations WHERE id = $1
+    `,
+        [id]
+    );
+    return result.rows[0];
+}
+
 async function changeScore({ name, youtubeLink, score }) {
     await connection.query(
         `
@@ -29,4 +39,9 @@ async function changeScore({ name, youtubeLink, score }) {
     );
 }
 
-export { insertRecommendation, getRecommendationByLink, changeScore };
+export {
+    insertRecommendation,
+    getRecommendationByLink,
+    getRecommendationById,
+    changeScore,
+};

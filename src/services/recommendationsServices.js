@@ -1,4 +1,5 @@
 import * as recommendationsRepositories from '../repositories/recommendationsRepositories.js';
+import APIError from '../errors/APIError.js';
 
 async function insertRecommendation({ name, youtubeLink, score }) {
     const recommendation =
@@ -19,4 +20,19 @@ async function insertRecommendation({ name, youtubeLink, score }) {
     }
 }
 
-export { insertRecommendation };
+async function upVote(id) {
+    const recommendation =
+        await recommendationsRepositories.getRecommendationById(id);
+
+    if (!recommendation) {
+        throw new APIError('This recommendation doesnt exist', 'NotFound');
+    }
+
+    await recommendationsRepositories.changeScore({
+        name: recommendation.name,
+        youtubeLink: recommendation.youtube_link,
+        score: recommendation.score + 1,
+    });
+}
+
+export { insertRecommendation, upVote };
