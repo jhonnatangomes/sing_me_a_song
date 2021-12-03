@@ -89,3 +89,38 @@ describe('get /recommendations/random', () => {
         expect(result.body).toHaveProperty('score');
     });
 });
+
+describe('get /recommendations/top/:amount', () => {
+    beforeAll(async () => {
+        await clearDatabase();
+    });
+
+    afterEach(async () => {
+        await createRecommendation();
+    });
+
+    it('returns 404 if no recommendations exist', async () => {
+        const result = await agent.get('/recommendations/top/2');
+        expect(result.status).toEqual(404);
+    });
+
+    it('returns 400 if amount is not a number', async () => {
+        const result = await agent.get('/recommendations/top/as');
+        expect(result.status).toEqual(400);
+    });
+
+    it('returns 400 if amount is less than 1', async () => {
+        const result = await agent.get('/recommendations/top/0');
+        expect(result.status).toEqual(400);
+    });
+
+    it('returns 200 and an array of songs', async () => {
+        const result = await agent.get('/recommendations/top/4');
+        expect(result.status).toEqual(200);
+        expect(result.body.length).toEqual(3);
+        expect(result.body[0]).toHaveProperty('id');
+        expect(result.body[0]).toHaveProperty('name');
+        expect(result.body[0]).toHaveProperty('youtubeLink');
+        expect(result.body[0]).toHaveProperty('score');
+    });
+});

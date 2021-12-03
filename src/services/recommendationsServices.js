@@ -88,4 +88,19 @@ async function getRecommendation() {
     return onlySongsBelowOrEqual10Score[randomIndex];
 }
 
-export { insertRecommendation, vote, getRecommendation };
+async function getTopRecommendations(amount) {
+    const recommendations =
+        await recommendationsRepositories.getTopRecommendations(amount);
+
+    if (!recommendations.length) {
+        throw new APIError('No recommendations found', 'NotFound');
+    }
+    return recommendations.map((song) => ({
+        id: song.id,
+        name: song.name,
+        youtubeLink: song.youtube_link,
+        score: song.score,
+    }));
+}
+
+export { insertRecommendation, vote, getRecommendation, getTopRecommendations };

@@ -55,6 +55,18 @@ async function getAllRecommendations() {
     return result.rows;
 }
 
+async function getTopRecommendations(amount) {
+    const result = await connection.query(
+        `
+        SELECT * FROM recommendations
+        ORDER BY score DESC
+        LIMIT $1
+    `,
+        [amount]
+    );
+    return result.rows;
+}
+
 export {
     insertRecommendation,
     getRecommendationByLink,
@@ -62,4 +74,5 @@ export {
     changeScore,
     deleteRecommendation,
     getAllRecommendations,
+    getTopRecommendations,
 };

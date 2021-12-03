@@ -51,4 +51,21 @@ async function getRecommendation(req, res, next) {
     }
 }
 
-export { postRecommendation, vote, getRecommendation };
+async function getTopRecommendations(req, res, next) {
+    try {
+        const { amount } = req.params;
+        if (Number.isNaN(Number(amount)) || Number(amount) < 1) {
+            return res.sendStatus(400);
+        }
+        const recommendations =
+            await recommendationServices.getTopRecommendations(Number(amount));
+        return res.send(recommendations);
+    } catch (error) {
+        if (error.type === 'NotFound') {
+            return res.sendStatus(404);
+        }
+        return next(error);
+    }
+}
+
+export { postRecommendation, vote, getRecommendation, getTopRecommendations };
