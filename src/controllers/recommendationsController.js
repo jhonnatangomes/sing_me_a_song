@@ -39,4 +39,16 @@ async function vote(req, res, next) {
     }
 }
 
-export { postRecommendation, vote };
+async function getRecommendation(req, res, next) {
+    try {
+        const recommendation = await recommendationServices.getRecommendation();
+        return res.send(recommendation);
+    } catch (error) {
+        if (error.type === 'NotFound') {
+            return res.sendStatus(404);
+        }
+        return next(error);
+    }
+}
+
+export { postRecommendation, vote, getRecommendation };

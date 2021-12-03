@@ -50,10 +50,16 @@ async function deleteRecommendation(id) {
     );
 }
 
+async function getAllRecommendations() {
+    const result = await connection.query(`SELECT * FROM recommendations`);
+    return result.rows;
+}
+
 export {
     insertRecommendation,
     getRecommendationByLink,
     getRecommendationById,
     changeScore,
     deleteRecommendation,
+    getAllRecommendations,
 };

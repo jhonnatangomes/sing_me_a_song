@@ -65,3 +65,27 @@ describe('post /recommendations/:id/downvote', () => {
         expect(result.status).toEqual(201);
     });
 });
+
+describe('get /recommendations/random', () => {
+    beforeAll(async () => {
+        await clearDatabase();
+    });
+
+    afterEach(async () => {
+        await createRecommendation();
+    });
+
+    it('returns 404 for no recommendations in database', async () => {
+        const result = await agent.get('/recommendations/random');
+        expect(result.status).toEqual(404);
+    });
+
+    it('returns 200 for recommendation in database', async () => {
+        const result = await agent.get('/recommendations/random');
+        expect(result.status).toEqual(200);
+        expect(result.body).toHaveProperty('id');
+        expect(result.body).toHaveProperty('name');
+        expect(result.body).toHaveProperty('youtubeLink');
+        expect(result.body).toHaveProperty('score');
+    });
+});
