@@ -19,4 +19,12 @@ async function insertGenre(name) {
     );
 }
 
-export { getGenreByName, insertGenre };
+async function getAllGenres() {
+    const result = await connection.query(`
+        SELECT * FROM genres
+        ORDER BY name
+    `);
+    return result.rows;
+}
+
+export { getGenreByName, insertGenre, getAllGenres };

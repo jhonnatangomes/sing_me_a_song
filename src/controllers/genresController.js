@@ -16,4 +16,16 @@ async function postGenre(req, res, next) {
     }
 }
 
-export { postGenre };
+async function getGenres(req, res, next) {
+    try {
+        const genres = await genresServices.getGenres();
+        return res.send(genres);
+    } catch (error) {
+        if (error.type === 'NotFound') {
+            return res.sendStatus(404);
+        }
+        return next(error);
+    }
+}
+
+export { postGenre, getGenres };

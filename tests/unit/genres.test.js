@@ -24,3 +24,32 @@ describe('create genre', () => {
         expect(insertGenre).toHaveBeenCalled();
     });
 });
+
+describe('get genres', () => {
+    const getAllGenres = jest.spyOn(genresRepositories, 'getAllGenres');
+
+    it('throws not found error when there are no genres', async () => {
+        getAllGenres.mockImplementationOnce(() => []);
+        try {
+            await sut.getGenres();
+        } catch (error) {
+            expect(error.message).toEqual('No genres in database');
+        }
+    });
+
+    it('returns genres when there are genres', async () => {
+        const genres = [
+            {
+                id: 1,
+                name: 'Forró',
+            },
+            {
+                id: 2,
+                name: 'Rock',
+            },
+        ];
+        getAllGenres.mockImplementationOnce(() => genres);
+        const result = await sut.getGenres();
+        expect(result).toEqual(genres);
+    });
+});

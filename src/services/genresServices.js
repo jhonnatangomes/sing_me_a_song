@@ -10,4 +10,13 @@ async function createGenre(name) {
     await genresRepositories.insertGenre(name);
 }
 
-export { createGenre };
+async function getGenres() {
+    const genres = await genresRepositories.getAllGenres();
+    if (!genres.length) {
+        throw new APIError('No genres in database', 'NotFound');
+    }
+
+    return genres;
+}
+
+export { createGenre, getGenres };
