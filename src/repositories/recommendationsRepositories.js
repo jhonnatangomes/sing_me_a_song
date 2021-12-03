@@ -20,13 +20,40 @@ async function getRecommendationByLink(youtubeLink) {
     return result.rows[0];
 }
 
-async function changeScore({ name, youtubeLink, score }) {
-    await connection.query(
+async function getRecommendationById(id) {
+    const result = await connection.query(
         `
-        UPDATE recommendations SET name = $1, score = $2 WHERE youtube_link = $3;
+        SELECT * FROM recommendations WHERE id = $1
+    `,
+        [id]
+    );
+    return result.rows[0];
+}
+
+async function changeScore({ name, youtubeLink, score }) {
+    const result = await connection.query(
+        `
+        UPDATE recommendations SET name = $1, score = $2 WHERE youtube_link = $3
+        RETURNING *;
     `,
         [name, score, youtubeLink]
     );
+    return result.rows[0];
 }
 
-export { insertRecommendation, getRecommendationByLink, changeScore };
+async function deleteRecommendation(id) {
+    await connection.query(
+        `
+        DELETE FROM recommendations WHERE id = $1
+    `,
+        [id]
+    );
+}
+
+export {
+    insertRecommendation,
+    getRecommendationByLink,
+    getRecommendationById,
+    changeScore,
+    deleteRecommendation,
+};
