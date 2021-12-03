@@ -1,6 +1,5 @@
 import * as recommendationsServices from '../../../src/services/recommendationsServices.js';
 import * as recommendationsRepositories from '../../../src/repositories/recommendationsRepositories.js';
-import APIError from '../../../src/errors/APIError.js';
 
 const sut = recommendationsServices;
 const changeScore = jest.spyOn(recommendationsRepositories, 'changeScore');

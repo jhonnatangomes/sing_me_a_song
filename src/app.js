@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(cors());
 
 app.post('/recommendations', recommendationsController.postRecommendation);
-app.post('/recommendations/:id/upvote', recommendationsController.upVote);
-app.post('/recommendations/:id/downvote', recommendationsController.downVote);
+app.post('/recommendations/:id/upvote', recommendationsController.vote);
+app.post('/recommendations/:id/downvote', recommendationsController.vote);
 app.use(errorMiddleware);
 
 export default app;

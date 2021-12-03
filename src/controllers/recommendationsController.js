@@ -20,10 +20,16 @@ async function postRecommendation(req, res, next) {
     }
 }
 
-async function upVote(req, res, next) {
+async function vote(req, res, next) {
     try {
         const { id } = req.params;
-        await recommendationServices.vote(id, '+');
+
+        if (req.url.includes('upvote')) {
+            await recommendationServices.vote(id, '+');
+        } else {
+            await recommendationServices.vote(id, '-');
+        }
+
         return res.sendStatus(201);
     } catch (error) {
         if (error.type === 'NotFound') {
@@ -33,17 +39,4 @@ async function upVote(req, res, next) {
     }
 }
 
-async function downVote(req, res, next) {
-    try {
-        const { id } = req.params;
-        await recommendationServices.vote(id, '-');
-        return res.sendStatus(201);
-    } catch (error) {
-        if (error.type === 'NotFound') {
-            return res.sendStatus(404);
-        }
-        return next(error);
-    }
-}
-
-export { postRecommendation, upVote, downVote };
+export { postRecommendation, vote };
