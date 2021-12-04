@@ -51,20 +51,16 @@ async function deleteRecommendation(id) {
     );
 }
 
-async function getAllRecommendations() {
-    const result = await connection.query(`SELECT * FROM recommendations`);
-    return result.rows;
-}
+async function getAllRecommendations(amount) {
+    let baseQuery = 'SELECT * FROM recommendations';
 
-async function getTopRecommendations(amount) {
-    const result = await connection.query(
-        `
-        SELECT * FROM recommendations
-        ORDER BY score DESC
-        LIMIT $1
-    `,
-        [amount]
-    );
+    if (amount) {
+        baseQuery += ' ORDER BY score DESC LIMIT $1';
+    }
+
+    const result = amount
+        ? await connection.query(baseQuery, [amount])
+        : await connection.query(baseQuery);
     return result.rows;
 }
 
@@ -75,5 +71,4 @@ export {
     changeScore,
     deleteRecommendation,
     getAllRecommendations,
-    getTopRecommendations,
 };

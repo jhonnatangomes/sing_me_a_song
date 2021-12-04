@@ -96,7 +96,7 @@ async function getRecommendation() {
 
 async function getTopRecommendations(amount) {
     const recommendations =
-        await recommendationsRepositories.getTopRecommendations(amount);
+        await recommendationsRepositories.getAllRecommendations(amount);
 
     if (!recommendations.length) {
         throw new APIError('No recommendations found', 'NotFound');

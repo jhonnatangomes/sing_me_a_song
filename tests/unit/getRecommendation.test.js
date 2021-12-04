@@ -84,7 +84,7 @@ describe('get recommendation', () => {
 describe('get top recommendations', () => {
     const getTopRecommendations = jest.spyOn(
         recommendationsRepositories,
-        'getTopRecommendations'
+        'getAllRecommendations'
     );
 
     it('throws an error for no recomendations in database', async () => {
