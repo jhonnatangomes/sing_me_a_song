@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import * as recommendationsRepositories from '../repositories/recommendationsRepositories.js';
 import getRandomInt from '../helpers/getRandomInt.js';
 import APIError from '../errors/APIError.js';
