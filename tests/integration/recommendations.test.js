@@ -5,7 +5,10 @@ import {
     recommendationsIncorrectFactory,
     recommendationsFactory,
     createRecommendation,
+    nonExistentGenreRecommendationFactory,
 } from '../factories/recommendationsFactory.js';
+
+import { createGenre } from '../factories/genresFactory.js';
 
 import { clearDatabase, endConnection } from '../database/clearDatabase.js';
 
@@ -17,18 +20,34 @@ afterAll(async () => {
 });
 
 describe('post /recommendations', () => {
+    const genres = [];
+
+    afterEach(async () => {
+        const name = await createGenre();
+        const name2 = await createGenre();
+        genres.push(name);
+        genres.push(name2);
+    });
+
+    it('should return 404 for a non-existent genre sent', async () => {
+        const result = await agent
+            .post('/recommendations')
+            .send(nonExistentGenreRecommendationFactory());
+        expect(result.status).toEqual(404);
+    });
+
+    it('should return 201 for correct data sent', async () => {
+        const result = await agent
+            .post('/recommendations')
+            .send(recommendationsFactory(genres));
+        expect(result.status).toEqual(201);
+    });
+
     it('should return 400 for incorrect data sent', async () => {
         const result = await agent
             .post('/recommendations')
             .send(recommendationsIncorrectFactory());
         expect(result.status).toEqual(400);
-    });
-
-    it('should return 200 for correct data sent', async () => {
-        const result = await agent
-            .post('/recommendations')
-            .send(recommendationsFactory());
-        expect(result.status).toEqual(201);
     });
 });
 

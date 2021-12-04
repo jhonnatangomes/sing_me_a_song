@@ -1,5 +1,6 @@
 import * as recommendationsServices from '../../src/services/recommendationsServices.js';
 import * as recommendationsRepositories from '../../src/repositories/recommendationsRepositories.js';
+import * as genresServices from '../../src/services/genresServices.js';
 
 const sut = recommendationsServices;
 const changeScore = jest.spyOn(recommendationsRepositories, 'changeScore');
@@ -13,7 +14,16 @@ describe('insert recommendation', () => {
 
     const insertRecomendation = jest
         .spyOn(recommendationsRepositories, 'insertRecommendation')
-        .mockImplementationOnce(() => undefined);
+        .mockImplementationOnce(() => ({
+            id: 1,
+        }));
+
+    jest.spyOn(genresServices, 'checkIfGenresExist').mockImplementation(
+        () => undefined
+    );
+    jest.spyOn(genresServices, 'setGenresToRecommendation').mockImplementation(
+        () => undefined
+    );
 
     it('should increase score when recommendation already exists', async () => {
         jest.spyOn(

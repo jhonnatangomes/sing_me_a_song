@@ -5,15 +5,27 @@ function recommendationsIncorrectFactory() {
     return {
         name: faker.datatype.number(),
         youtubeLink: faker.datatype.string(),
+        genres: [faker.datatype.number()],
     };
 }
 
-function recommendationsFactory() {
+function recommendationsFactory(genres) {
     return {
         name: faker.datatype.string(),
         youtubeLink: `https://www.youtube.com/watch?v=${faker.random.alphaNumeric(
             12
         )}`,
+        genres,
+    };
+}
+
+function nonExistentGenreRecommendationFactory() {
+    return {
+        name: faker.datatype.string(),
+        youtubeLink: `https://www.youtube.com/watch?v=${faker.random.alphaNumeric(
+            12
+        )}`,
+        genres: [faker.name.findName()],
     };
 }
 
@@ -35,4 +47,5 @@ export {
     recommendationsIncorrectFactory,
     recommendationsFactory,
     createRecommendation,
+    nonExistentGenreRecommendationFactory,
 };

@@ -3,7 +3,7 @@ import * as recommendationServices from '../services/recommendationsServices.js'
 
 async function postRecommendation(req, res, next) {
     try {
-        const { name, youtubeLink } = req.body;
+        const { name, youtubeLink, genres } = req.body;
         const validRecommendation = isRecommendationValid(req.body);
         if (!validRecommendation.valid) {
             return res.status(400).send(validRecommendation.message);
@@ -13,9 +13,13 @@ async function postRecommendation(req, res, next) {
             name,
             youtubeLink,
             score: 0,
+            genres,
         });
         return res.sendStatus(201);
     } catch (error) {
+        if (error.type === 'NotFound') {
+            return res.sendStatus(404);
+        }
         return next(error);
     }
 }

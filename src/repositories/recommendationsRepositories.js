@@ -1,13 +1,14 @@
 import connection from '../database/connection.js';
 
 async function insertRecommendation({ name, youtubeLink, score }) {
-    await connection.query(
+    const result = await connection.query(
         `
         INSERT INTO recommendations (name, youtube_link, score)
-        VALUES ($1, $2, $3);
+        VALUES ($1, $2, $3) RETURNING id;
     `,
         [name, youtubeLink, score]
     );
+    return result.rows[0];
 }
 
 async function getRecommendationByLink(youtubeLink) {
