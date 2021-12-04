@@ -1,9 +1,9 @@
-import * as recommendationsServices from '../../../src/services/recommendationsServices.js';
-import * as recommendationsRepositories from '../../../src/repositories/recommendationsRepositories.js';
-import getRandomInt from '../../../src/helpers/getRandomInt.js';
+import * as recommendationsServices from '../../src/services/recommendationsServices.js';
+import * as recommendationsRepositories from '../../src/repositories/recommendationsRepositories.js';
+import getRandomInt from '../../src/helpers/getRandomInt.js';
 
 const sut = recommendationsServices;
-jest.mock('../../../src/helpers/getRandomInt.js');
+jest.mock('../../src/helpers/getRandomInt.js');
 
 describe('get recommendation', () => {
     const getAllRecommendations = jest.spyOn(
