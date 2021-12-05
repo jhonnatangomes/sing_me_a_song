@@ -52,7 +52,18 @@ async function deleteRecommendation(id) {
 }
 
 async function getAllRecommendations(amount) {
-    let baseQuery = 'SELECT * FROM recommendations';
+    let baseQuery = `
+    SELECT recommendations.id AS recommendation_id,
+    recommendations.name AS recommendation_name,
+    recommendations.youtube_link,
+    recommendations.score,
+    genres.id AS genre_id,
+    genres.name AS genre_name
+    FROM recommendations JOIN recommendations_genres
+    ON recommendations.id = recommendations_genres.recommendation_id
+    JOIN genres
+    ON recommendations_genres.genre_id = genres.id
+    `;
 
     if (amount) {
         baseQuery += ' ORDER BY score DESC LIMIT $1';
@@ -61,7 +72,36 @@ async function getAllRecommendations(amount) {
     const result = amount
         ? await connection.query(baseQuery, [amount])
         : await connection.query(baseQuery);
-    return result.rows;
+
+    const newArray = [];
+
+    result.rows.forEach((song) => {
+        if (!newArray.some((el) => el.name === song.recommendation_name)) {
+            song.id = song.recommendation_id;
+            song.name = song.recommendation_name;
+            song.genres = [
+                {
+                    id: song.genre_id,
+                    name: song.genre_name,
+                },
+            ];
+            song.youtubeLink = song.youtube_link;
+
+            delete song.genre_id;
+            delete song.genre_name;
+            delete song.recommendation_id;
+            delete song.recommendation_name;
+            delete song.youtube_link;
+            newArray.push(song);
+        } else {
+            newArray[newArray.length - 1].genres.push({
+                id: song.genre_id,
+                name: song.genre_name,
+            });
+        }
+    });
+
+    return newArray;
 }
 
 export {

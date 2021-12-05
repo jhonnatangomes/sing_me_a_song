@@ -66,9 +66,6 @@ async function getRecommendation() {
     const onlySongsBelowOrEqual10Score = [];
 
     recommendations.forEach((song) => {
-        song.youtubeLink = song.youtube_link;
-        delete song.youtube_link;
-
         if (song.score > 10) {
             onlySongsAbove10Score.push(song);
         } else {
@@ -101,12 +98,7 @@ async function getTopRecommendations(amount) {
     if (!recommendations.length) {
         throw new APIError('No recommendations found', 'NotFound');
     }
-    return recommendations.map((song) => ({
-        id: song.id,
-        name: song.name,
-        youtubeLink: song.youtube_link,
-        score: song.score,
-    }));
+    return recommendations;
 }
 
 export { insertRecommendation, vote, getRecommendation, getTopRecommendations };

@@ -1,5 +1,6 @@
 import faker from 'faker';
 import connection from '../../src/database/connection.js';
+import { createGenre } from './genresFactory.js';
 
 function recommendationsIncorrectFactory() {
     return {
@@ -40,6 +41,18 @@ async function createRecommendation() {
         VALUES ($1, $2, $3) RETURNING id`,
         [recommendation.name, recommendation.youtubeLink, recommendation.score]
     );
+
+    const genre = await createGenre();
+
+    await connection.query(
+        `
+        INSERT INTO recommendations_genres
+        (recommendation_id, genre_id) VALUES
+        ($1, $2)
+    `,
+        [result.rows[0].id, genre.id]
+    );
+
     return result.rows[0].id;
 }
 

@@ -23,10 +23,10 @@ describe('post /recommendations', () => {
     const genres = [];
 
     afterEach(async () => {
-        const name = await createGenre();
-        const name2 = await createGenre();
-        genres.push(name);
-        genres.push(name2);
+        const result = await createGenre();
+        const result2 = await createGenre();
+        genres.push(result.name);
+        genres.push(result2.name);
     });
 
     it('should return 404 for a non-existent genre sent', async () => {
@@ -106,6 +106,9 @@ describe('get /recommendations/random', () => {
         expect(result.body).toHaveProperty('name');
         expect(result.body).toHaveProperty('youtubeLink');
         expect(result.body).toHaveProperty('score');
+        expect(result.body).toHaveProperty('genres');
+        expect(result.body.genres[0]).toHaveProperty('id');
+        expect(result.body.genres[0]).toHaveProperty('name');
     });
 });
 
@@ -141,5 +144,8 @@ describe('get /recommendations/top/:amount', () => {
         expect(result.body[0]).toHaveProperty('name');
         expect(result.body[0]).toHaveProperty('youtubeLink');
         expect(result.body[0]).toHaveProperty('score');
+        expect(result.body[0]).toHaveProperty('genres');
+        expect(result.body[0].genres[0]).toHaveProperty('id');
+        expect(result.body[0].genres[0]).toHaveProperty('name');
     });
 });
