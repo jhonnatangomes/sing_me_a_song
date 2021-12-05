@@ -53,7 +53,7 @@ async function createRecommendation() {
         [result.rows[0].id, genre.id]
     );
 
-    return result.rows[0].id;
+    return { recommendationId: result.rows[0].id, genreId: genre.id };
 }
 
 export {

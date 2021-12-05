@@ -31,11 +31,11 @@ async function getGenres(req, res, next) {
 async function getSongsByGenreId(req, res, next) {
     try {
         const { id: genreId } = req.params;
-        if (!genreId || Number.isNaN(Number(genreId))) {
+        if (Number.isNaN(Number(genreId))) {
             return res.sendStatus(400);
         }
 
-        const songs = await genresServices.getSongsByGenreId(genreId);
+        const songs = await genresServices.getSongsByGenreId(Number(genreId));
         return res.send(songs);
     } catch (error) {
         if (error.type === 'NotFound') {

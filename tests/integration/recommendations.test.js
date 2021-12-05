@@ -62,7 +62,7 @@ describe('post /recommendations/:id/upvote', () => {
     });
 
     it('returns 201 for an existent id in database', async () => {
-        const id = await createRecommendation();
+        const { recommendationId: id } = await createRecommendation();
         const result = await agent.post(`/recommendations/${id}/upvote`);
         expect(result.status).toEqual(201);
     });
@@ -79,7 +79,7 @@ describe('post /recommendations/:id/downvote', () => {
     });
 
     it('returns 201 for an existent id in database', async () => {
-        const id = await createRecommendation();
+        const { recommendationId: id } = await createRecommendation();
         const result = await agent.post(`/recommendations/${id}/downvote`);
         expect(result.status).toEqual(201);
     });
