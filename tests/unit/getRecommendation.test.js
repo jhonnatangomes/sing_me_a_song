@@ -84,7 +84,7 @@ describe('get recommendation', () => {
 describe('get top recommendations', () => {
     const getTopRecommendations = jest.spyOn(
         recommendationsRepositories,
-        'getTopRecommendations'
+        'getAllRecommendations'
     );
 
     it('throws an error for no recomendations in database', async () => {
@@ -101,20 +101,13 @@ describe('get top recommendations', () => {
             {
                 id: 12,
                 name: 'Falamansa - Xote dos Milagres',
-                youtube_link:
+                youtubeLink:
                     'https://www.youtube.com/watch?v=ePjtnSPFWK8&ab_channel=CHXVEVO',
                 score: 112,
             },
         ];
         getTopRecommendations.mockImplementationOnce(() => recommendations);
         const result = await sut.getTopRecommendations();
-        expect(result).toEqual([
-            {
-                id: recommendations[0].id,
-                name: recommendations[0].name,
-                youtubeLink: recommendations[0].youtube_link,
-                score: recommendations[0].score,
-            },
-        ]);
+        expect(result).toEqual(recommendations);
     });
 });

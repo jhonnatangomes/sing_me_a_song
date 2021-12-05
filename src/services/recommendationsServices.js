@@ -1,8 +1,11 @@
 import * as recommendationsRepositories from '../repositories/recommendationsRepositories.js';
+import * as genresServices from './genresServices.js';
 import getRandomInt from '../helpers/getRandomInt.js';
 import APIError from '../errors/APIError.js';
 
-async function insertRecommendation({ name, youtubeLink, score }) {
+async function insertRecommendation({ name, youtubeLink, score, genres }) {
+    await genresServices.checkIfGenresExist(genres);
+
     const recommendation =
         await recommendationsRepositories.getRecommendationByLink(youtubeLink);
 
@@ -13,10 +16,14 @@ async function insertRecommendation({ name, youtubeLink, score }) {
             score: recommendation.score + 1,
         });
     } else {
-        await recommendationsRepositories.insertRecommendation({
+        const result = await recommendationsRepositories.insertRecommendation({
             name,
             youtubeLink,
             score,
+        });
+        await genresServices.setGenresToRecommendation({
+            genres,
+            recommendationId: result.id,
         });
     }
 }
@@ -59,9 +66,6 @@ async function getRecommendation() {
     const onlySongsBelowOrEqual10Score = [];
 
     recommendations.forEach((song) => {
-        song.youtubeLink = song.youtube_link;
-        delete song.youtube_link;
-
         if (song.score > 10) {
             onlySongsAbove10Score.push(song);
         } else {
@@ -89,17 +93,12 @@ async function getRecommendation() {
 
 async function getTopRecommendations(amount) {
     const recommendations =
-        await recommendationsRepositories.getTopRecommendations(amount);
+        await recommendationsRepositories.getAllRecommendations(amount);
 
     if (!recommendations.length) {
         throw new APIError('No recommendations found', 'NotFound');
     }
-    return recommendations.map((song) => ({
-        id: song.id,
-        name: song.name,
-        youtubeLink: song.youtube_link,
-        score: song.score,
-    }));
+    return recommendations;
 }
 
 export { insertRecommendation, vote, getRecommendation, getTopRecommendations };

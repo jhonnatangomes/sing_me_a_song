@@ -5,7 +5,10 @@ import {
     recommendationsIncorrectFactory,
     recommendationsFactory,
     createRecommendation,
+    nonExistentGenreRecommendationFactory,
 } from '../factories/recommendationsFactory.js';
+
+import { createGenre } from '../factories/genresFactory.js';
 
 import { clearDatabase, endConnection } from '../database/clearDatabase.js';
 
@@ -17,18 +20,34 @@ afterAll(async () => {
 });
 
 describe('post /recommendations', () => {
+    const genres = [];
+
+    afterEach(async () => {
+        const result = await createGenre();
+        const result2 = await createGenre();
+        genres.push(result.name);
+        genres.push(result2.name);
+    });
+
+    it('should return 404 for a non-existent genre sent', async () => {
+        const result = await agent
+            .post('/recommendations')
+            .send(nonExistentGenreRecommendationFactory());
+        expect(result.status).toEqual(404);
+    });
+
+    it('should return 201 for correct data sent', async () => {
+        const result = await agent
+            .post('/recommendations')
+            .send(recommendationsFactory(genres));
+        expect(result.status).toEqual(201);
+    });
+
     it('should return 400 for incorrect data sent', async () => {
         const result = await agent
             .post('/recommendations')
             .send(recommendationsIncorrectFactory());
         expect(result.status).toEqual(400);
-    });
-
-    it('should return 200 for correct data sent', async () => {
-        const result = await agent
-            .post('/recommendations')
-            .send(recommendationsFactory());
-        expect(result.status).toEqual(201);
     });
 });
 
@@ -87,6 +106,9 @@ describe('get /recommendations/random', () => {
         expect(result.body).toHaveProperty('name');
         expect(result.body).toHaveProperty('youtubeLink');
         expect(result.body).toHaveProperty('score');
+        expect(result.body).toHaveProperty('genres');
+        expect(result.body.genres[0]).toHaveProperty('id');
+        expect(result.body.genres[0]).toHaveProperty('name');
     });
 });
 
@@ -122,5 +144,8 @@ describe('get /recommendations/top/:amount', () => {
         expect(result.body[0]).toHaveProperty('name');
         expect(result.body[0]).toHaveProperty('youtubeLink');
         expect(result.body[0]).toHaveProperty('score');
+        expect(result.body[0]).toHaveProperty('genres');
+        expect(result.body[0].genres[0]).toHaveProperty('id');
+        expect(result.body[0].genres[0]).toHaveProperty('name');
     });
 });
