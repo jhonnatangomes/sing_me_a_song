@@ -56,7 +56,7 @@ async function getSongsByGenreId(genreId) {
     }
 
     const name = await genresRepositories.getGenreNameById(genreId);
-    const score = recommendationsById.reduce((a, b) => a + b);
+    const score = recommendationsById.reduce((a, b) => a.score + b.score);
 
     return {
         id: genreId,

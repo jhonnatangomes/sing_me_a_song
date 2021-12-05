@@ -1,5 +1,6 @@
 import * as genresServices from '../../src/services/genresServices.js';
 import * as genresRepositories from '../../src/repositories/genresRepositories.js';
+import * as recommendationsRepositories from '../../src/repositories/recommendationsRepositories.js';
 import APIError from '../../src/errors/APIError.js';
 
 const sut = genresServices;
@@ -95,6 +96,79 @@ describe('set genres to recommendations', () => {
         expect(setGenresToRecommendation).toHaveBeenCalledWith({
             genresIds: [1, 2, 3],
             recommendationId: 1,
+        });
+    });
+});
+
+describe('get songs by genre id', () => {
+    const getAllRecommendations = jest.spyOn(
+        recommendationsRepositories,
+        'getAllRecommendations'
+    );
+
+    it('throws error if there are no recommendations', async () => {
+        getAllRecommendations.mockImplementationOnce(() => []);
+        const result = sut.getSongsByGenreId();
+        await expect(result).rejects.toThrow(APIError);
+    });
+
+    it('throws error if there are no recommendations with the given genre', async () => {
+        getAllRecommendations.mockImplementationOnce(() => [
+            {
+                id: 1,
+                genres: [
+                    {
+                        id: 1,
+                    },
+                ],
+            },
+        ]);
+        const result = sut.getSongsByGenreId(2);
+        await expect(result).rejects.toThrow(APIError);
+    });
+
+    it('returns formatted object when there are recommendations with the given genre', async () => {
+        const recommendations = [
+            {
+                id: 1,
+                score: 10,
+                genres: [
+                    {
+                        id: 1,
+                    },
+                ],
+            },
+            {
+                id: 2,
+                score: 5,
+                genres: [
+                    {
+                        id: 1,
+                    },
+                ],
+            },
+            {
+                id: 3,
+                score: 10,
+                genres: [
+                    {
+                        id: 2,
+                    },
+                ],
+            },
+        ];
+
+        jest.spyOn(
+            genresRepositories,
+            'getGenreNameById'
+        ).mockImplementationOnce(() => 'Forró');
+        getAllRecommendations.mockImplementationOnce(() => recommendations);
+        const result = await sut.getSongsByGenreId(1);
+        expect(result).toEqual({
+            id: 1,
+            name: 'Forró',
+            score: 15,
+            recommendations: [recommendations[0], recommendations[1]],
         });
     });
 });
