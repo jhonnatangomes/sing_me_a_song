@@ -25,8 +25,8 @@ describe('post /recommendations', () => {
     afterEach(async () => {
         const result = await createGenre();
         const result2 = await createGenre();
-        genres.push(result.name);
-        genres.push(result2.name);
+        genres.push(result.id);
+        genres.push(result2.id);
     });
 
     it('should return 404 for a non-existent genre sent', async () => {

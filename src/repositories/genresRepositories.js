@@ -20,15 +20,14 @@ async function insertGenre(name) {
     );
 }
 
-async function getGenreIdsByNames(names) {
-    let baseQuery = 'SELECT id FROM genres WHERE name = $1';
-    if (names.length > 1) {
-        for (let i = 1; i < names.length; i++) {
-            baseQuery += ` OR name = $${i + 1}`;
-        }
-    }
-    const result = await connection.query(baseQuery, names);
-    return result.rows.map((genre) => genre.id);
+async function getGenreNameById(genreId) {
+    const result = await connection.query(
+        `
+        SELECT * FROM genres WHERE id = $1
+    `,
+        [genreId]
+    );
+    return result.rows[0].name;
 }
 
 async function getAllGenres() {
@@ -55,5 +54,5 @@ export {
     insertGenre,
     getAllGenres,
     setGenresToRecommendation,
-    getGenreIdsByNames,
+    getGenreNameById,
 };

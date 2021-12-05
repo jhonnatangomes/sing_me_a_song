@@ -3,8 +3,8 @@ import * as genresServices from './genresServices.js';
 import getRandomInt from '../helpers/getRandomInt.js';
 import APIError from '../errors/APIError.js';
 
-async function insertRecommendation({ name, youtubeLink, score, genres }) {
-    await genresServices.checkIfGenresExist(genres);
+async function insertRecommendation({ name, youtubeLink, score, genresIds }) {
+    await genresServices.checkIfGenresExist(genresIds);
 
     const recommendation =
         await recommendationsRepositories.getRecommendationByLink(youtubeLink);
@@ -22,7 +22,7 @@ async function insertRecommendation({ name, youtubeLink, score, genres }) {
             score,
         });
         await genresServices.setGenresToRecommendation({
-            genres,
+            genresIds,
             recommendationId: result.id,
         });
     }

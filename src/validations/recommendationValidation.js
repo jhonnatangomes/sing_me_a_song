@@ -5,7 +5,7 @@ const schema = Joi.object({
     youtubeLink: Joi.string()
         .pattern(/(https:\/\/www.youtube.com\/watch\?|https:\/\/youtu.be\/).*/)
         .required(),
-    genres: Joi.array().items(Joi.string().required()).required(),
+    genresIds: Joi.array().items(Joi.number().integer().required()).required(),
 });
 
 export default function isRecommendationValid(body) {
