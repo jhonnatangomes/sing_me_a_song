@@ -57,10 +57,10 @@ async function vote(id, type) {
 async function getRecommendation() {
     const recommendations = await helpersServices.getAllRecommendations();
 
-    const filteredRecommendations = await helpersServices.getRecommendation(
+    const randomRecommendation = await helpersServices.getRecommendation(
         recommendations
     );
-    return filteredRecommendations;
+    return randomRecommendation;
 }
 
 async function getTopRecommendations(amount) {
@@ -76,10 +76,10 @@ async function getTopRecommendations(amount) {
 async function getRandomRecommendationByGenre(genreId) {
     const recommendations = await genresServices.getSongsByGenreId(genreId);
 
-    const filteredRecommendations = await helpersServices.getRecommendation(
+    const randomRecommendation = await helpersServices.getRecommendation(
         recommendations.recommendations
     );
-    return filteredRecommendations;
+    return randomRecommendation;
 }
 
 export {

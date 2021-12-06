@@ -9,11 +9,9 @@ describe('create genre', () => {
     const getGenreByName = jest.spyOn(genresRepositories, 'getGenreByName');
     it('throws conflict error when genre already exists', async () => {
         getGenreByName.mockImplementationOnce(() => true);
-        try {
-            await sut.createGenre();
-        } catch (error) {
-            expect(error.message).toEqual('Genre already exists');
-        }
+
+        const result = sut.createGenre();
+        await expect(result).rejects.toThrow(APIError);
     });
 
     it('inserts genre when it doesnt exist on database', async () => {
@@ -32,11 +30,9 @@ describe('get genres', () => {
 
     it('throws not found error when there are no genres', async () => {
         getAllGenres.mockImplementationOnce(() => []);
-        try {
-            await sut.getGenres();
-        } catch (error) {
-            expect(error.message).toEqual('No genres in database');
-        }
+
+        const result = sut.getGenres();
+        await expect(result).rejects.toThrow(APIError);
     });
 
     it('returns genres when there are genres', async () => {

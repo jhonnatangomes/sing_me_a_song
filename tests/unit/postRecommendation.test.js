@@ -1,6 +1,7 @@
 import * as recommendationsServices from '../../src/services/recommendationsServices.js';
 import * as recommendationsRepositories from '../../src/repositories/recommendationsRepositories.js';
 import * as genresServices from '../../src/services/genresServices.js';
+import APIError from '../../src/errors/APIError.js';
 
 const sut = recommendationsServices;
 const changeScore = jest.spyOn(recommendationsRepositories, 'changeScore');
@@ -59,11 +60,8 @@ describe('vote', () => {
             'getRecommendationById'
         ).mockImplementationOnce(() => false);
 
-        try {
-            await recommendationsServices.vote();
-        } catch (error) {
-            expect(error.message).toEqual('This recommendation doesnt exist');
-        }
+        const result = sut.vote();
+        await expect(result).rejects.toThrow(APIError);
     });
 
     it('increases score for + type', async () => {
@@ -77,7 +75,7 @@ describe('vote', () => {
             'getRecommendationById'
         ).mockImplementationOnce(() => recommendationObject);
 
-        await recommendationsServices.vote(1, '+');
+        await sut.vote(1, '+');
         expect(changeScore).toHaveBeenCalledWith({
             name: recommendationObject.name,
             youtubeLink: recommendationObject.youtube_link,
@@ -100,7 +98,7 @@ describe('vote', () => {
             return { id: 25, score: -4 };
         });
 
-        await recommendationsServices.vote(1, '-');
+        await sut.vote(1, '-');
         expect(changeScore).toHaveBeenCalledWith({
             name: recommendationObject.name,
             youtubeLink: recommendationObject.youtube_link,
@@ -124,7 +122,7 @@ describe('vote', () => {
             return { id: 25, score: -5 };
         });
 
-        await recommendationsServices.vote(1, '-');
+        await sut.vote(1, '-');
         expect(changeScore).toHaveBeenCalledWith({
             name: recommendationObject.name,
             youtubeLink: recommendationObject.youtube_link,
@@ -148,7 +146,7 @@ describe('vote', () => {
             return { id: 25, score: -6 };
         });
 
-        await recommendationsServices.vote(1, '-');
+        await sut.vote(1, '-');
         expect(changeScore).toHaveBeenCalledWith({
             name: recommendationObject.name,
             youtubeLink: recommendationObject.youtube_link,
