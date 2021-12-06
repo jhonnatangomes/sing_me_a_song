@@ -1,10 +1,10 @@
 import * as recommendationsRepositories from '../repositories/recommendationsRepositories.js';
 import * as genresServices from './genresServices.js';
-import getRandomInt from '../helpers/getRandomInt.js';
+import * as helpersServices from './helpersServices.js';
 import APIError from '../errors/APIError.js';
 
-async function insertRecommendation({ name, youtubeLink, score, genres }) {
-    await genresServices.checkIfGenresExist(genres);
+async function insertRecommendation({ name, youtubeLink, score, genresIds }) {
+    await genresServices.checkIfGenresExist(genresIds);
 
     const recommendation =
         await recommendationsRepositories.getRecommendationByLink(youtubeLink);
@@ -22,7 +22,7 @@ async function insertRecommendation({ name, youtubeLink, score, genres }) {
             score,
         });
         await genresServices.setGenresToRecommendation({
-            genres,
+            genresIds,
             recommendationId: result.id,
         });
     }
@@ -55,40 +55,12 @@ async function vote(id, type) {
 }
 
 async function getRecommendation() {
-    const recommendations =
-        await recommendationsRepositories.getAllRecommendations();
+    const recommendations = await helpersServices.getAllRecommendations();
 
-    if (!recommendations.length) {
-        throw new APIError('No recommendations found', 'NotFound');
-    }
-
-    const onlySongsAbove10Score = [];
-    const onlySongsBelowOrEqual10Score = [];
-
-    recommendations.forEach((song) => {
-        if (song.score > 10) {
-            onlySongsAbove10Score.push(song);
-        } else {
-            onlySongsBelowOrEqual10Score.push(song);
-        }
-    });
-
-    if (!onlySongsAbove10Score.length || !onlySongsBelowOrEqual10Score.length) {
-        const randomIndex = getRandomInt(0, recommendations.length - 1);
-        return recommendations[randomIndex];
-    }
-
-    const randomPercentage = getRandomInt(1, 10);
-    if (randomPercentage <= 7) {
-        const randomIndex = getRandomInt(0, onlySongsAbove10Score.length - 1);
-        return onlySongsAbove10Score[randomIndex];
-    }
-
-    const randomIndex = getRandomInt(
-        0,
-        onlySongsBelowOrEqual10Score.length - 1
+    const randomRecommendation = await helpersServices.getRecommendation(
+        recommendations
     );
-    return onlySongsBelowOrEqual10Score[randomIndex];
+    return randomRecommendation;
 }
 
 async function getTopRecommendations(amount) {
@@ -101,4 +73,19 @@ async function getTopRecommendations(amount) {
     return recommendations;
 }
 
-export { insertRecommendation, vote, getRecommendation, getTopRecommendations };
+async function getRandomRecommendationByGenre(genreId) {
+    const recommendations = await genresServices.getSongsByGenreId(genreId);
+
+    const randomRecommendation = await helpersServices.getRecommendation(
+        recommendations.recommendations
+    );
+    return randomRecommendation;
+}
+
+export {
+    insertRecommendation,
+    vote,
+    getRecommendation,
+    getTopRecommendations,
+    getRandomRecommendationByGenre,
+};

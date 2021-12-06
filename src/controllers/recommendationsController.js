@@ -3,7 +3,7 @@ import * as recommendationServices from '../services/recommendationsServices.js'
 
 async function postRecommendation(req, res, next) {
     try {
-        const { name, youtubeLink, genres } = req.body;
+        const { name, youtubeLink, genresIds } = req.body;
         const validRecommendation = isRecommendationValid(req.body);
         if (!validRecommendation.valid) {
             return res.status(400).send(validRecommendation.message);
@@ -13,7 +13,7 @@ async function postRecommendation(req, res, next) {
             name,
             youtubeLink,
             score: 0,
-            genres,
+            genresIds,
         });
         return res.sendStatus(201);
     } catch (error) {
@@ -72,4 +72,29 @@ async function getTopRecommendations(req, res, next) {
     }
 }
 
-export { postRecommendation, vote, getRecommendation, getTopRecommendations };
+async function getRandomRecommendationByGenre(req, res, next) {
+    try {
+        const { id: genreId } = req.params;
+        if (Number.isNaN(Number(genreId)) || Number(genreId) < 1) {
+            return res.sendStatus(400);
+        }
+        const recommendation =
+            await recommendationServices.getRandomRecommendationByGenre(
+                Number(genreId)
+            );
+        return res.send(recommendation);
+    } catch (error) {
+        if (error.type === 'NotFound') {
+            return res.sendStatus(404);
+        }
+        return next(error);
+    }
+}
+
+export {
+    postRecommendation,
+    vote,
+    getRecommendation,
+    getTopRecommendations,
+    getRandomRecommendationByGenre,
+};

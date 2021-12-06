@@ -10,13 +10,13 @@ function recommendationsIncorrectFactory() {
     };
 }
 
-function recommendationsFactory(genres) {
+function recommendationsFactory(genresIds) {
     return {
         name: faker.datatype.string(),
         youtubeLink: `https://www.youtube.com/watch?v=${faker.random.alphaNumeric(
             12
         )}`,
-        genres,
+        genresIds,
     };
 }
 
@@ -26,7 +26,7 @@ function nonExistentGenreRecommendationFactory() {
         youtubeLink: `https://www.youtube.com/watch?v=${faker.random.alphaNumeric(
             12
         )}`,
-        genres: [faker.name.findName()],
+        genresIds: [faker.datatype.number()],
     };
 }
 
@@ -53,7 +53,7 @@ async function createRecommendation() {
         [result.rows[0].id, genre.id]
     );
 
-    return result.rows[0].id;
+    return { recommendationId: result.rows[0].id, genreId: genre.id };
 }
 
 export {

@@ -1,4 +1,5 @@
 import * as genresRepositories from '../repositories/genresRepositories.js';
+import * as recommendationsRepositories from '../repositories/recommendationsRepositories.js';
 import APIError from '../errors/APIError.js';
 
 async function createGenre(name) {
@@ -19,29 +20,50 @@ async function getGenres() {
     return genres;
 }
 
-async function checkIfGenresExist(genres) {
+async function checkIfGenresExist(genresIds) {
     const allGenres = await genresRepositories.getAllGenres();
 
-    const allGenresNames = allGenres.map((genre) => genre.name);
+    const allGenresIds = allGenres.map((genre) => genre.id);
 
-    const noGenre = genres.find((genre) => !allGenresNames.includes(genre));
+    const noGenre = genresIds.find((genre) => !allGenresIds.includes(genre));
 
     if (noGenre) {
         throw new APIError(`${noGenre} doesnt exist`, 'NotFound');
     }
 }
 
-async function getGenreIdsByNames(genres) {
-    const genresIds = await genresRepositories.getGenreIdsByNames(genres);
-    return genresIds;
-}
-
-async function setGenresToRecommendation({ genres, recommendationId }) {
-    const genresIds = await getGenreIdsByNames(genres);
+async function setGenresToRecommendation({ genresIds, recommendationId }) {
     await genresRepositories.setGenresToRecommendation({
         genresIds,
         recommendationId,
     });
+}
+
+async function getSongsByGenreId(genreId) {
+    const recommendations =
+        await recommendationsRepositories.getAllRecommendations();
+
+    if (!recommendations.length) {
+        throw new APIError('No recommendations found', 'NotFound');
+    }
+
+    const recommendationsById = recommendations.filter((song) =>
+        song.genres.some((genre) => genre.id === genreId)
+    );
+
+    if (!recommendationsById.length) {
+        throw new APIError('Genre doesnt exist', 'NotFound');
+    }
+
+    const name = await genresRepositories.getGenreNameById(genreId);
+    const score = recommendationsById.reduce((a, b) => a.score + b.score);
+
+    return {
+        id: genreId,
+        name,
+        score,
+        recommendations: recommendationsById,
+    };
 }
 
 export {
@@ -49,4 +71,5 @@ export {
     getGenres,
     checkIfGenresExist,
     setGenresToRecommendation,
+    getSongsByGenreId,
 };

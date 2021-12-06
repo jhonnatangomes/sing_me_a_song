@@ -25,8 +25,8 @@ describe('post /recommendations', () => {
     afterEach(async () => {
         const result = await createGenre();
         const result2 = await createGenre();
-        genres.push(result.name);
-        genres.push(result2.name);
+        genres.push(result.id);
+        genres.push(result2.id);
     });
 
     it('should return 404 for a non-existent genre sent', async () => {
@@ -62,7 +62,7 @@ describe('post /recommendations/:id/upvote', () => {
     });
 
     it('returns 201 for an existent id in database', async () => {
-        const id = await createRecommendation();
+        const { recommendationId: id } = await createRecommendation();
         const result = await agent.post(`/recommendations/${id}/upvote`);
         expect(result.status).toEqual(201);
     });
@@ -79,7 +79,7 @@ describe('post /recommendations/:id/downvote', () => {
     });
 
     it('returns 201 for an existent id in database', async () => {
-        const id = await createRecommendation();
+        const { recommendationId: id } = await createRecommendation();
         const result = await agent.post(`/recommendations/${id}/downvote`);
         expect(result.status).toEqual(201);
     });
@@ -147,5 +147,54 @@ describe('get /recommendations/top/:amount', () => {
         expect(result.body[0]).toHaveProperty('genres');
         expect(result.body[0].genres[0]).toHaveProperty('id');
         expect(result.body[0].genres[0]).toHaveProperty('name');
+    });
+});
+
+describe('get /recommendations/genres/:id/random', () => {
+    let genreId;
+
+    beforeAll(async () => {
+        await clearDatabase();
+    });
+
+    afterEach(async () => {
+        const result = await createRecommendation();
+        genreId = result.genreId;
+    });
+
+    it('should return 404 for no recommendations in database', async () => {
+        const result = await agent.get('/recommendations/genres/1/random');
+        expect(result.status).toEqual(404);
+    });
+
+    it('should return 404 for non-existent genre', async () => {
+        const result = await agent.get(
+            `/recommendations/genres/${genreId + 100}/random`
+        );
+        expect(result.status).toEqual(404);
+    });
+
+    it('should return 400 for a non-numerical id provided', async () => {
+        const result = await agent.get('/recommendations/genres/asas/random');
+        expect(result.status).toEqual(400);
+    });
+
+    it('should return 400 for an id less than 1 provided', async () => {
+        const result = await agent.get('/recommendations/genres/0/random');
+        expect(result.status).toEqual(400);
+    });
+
+    it('should return 200 and a random recommendation', async () => {
+        const result = await agent.get(
+            `/recommendations/genres/${genreId}/random`
+        );
+        expect(result.status).toEqual(200);
+        expect(result.body).toHaveProperty('id');
+        expect(result.body).toHaveProperty('name');
+        expect(result.body).toHaveProperty('genres');
+        expect(result.body).toHaveProperty('youtubeLink');
+        expect(result.body).toHaveProperty('score');
+        expect(result.body.genres[0]).toHaveProperty('id');
+        expect(result.body.genres[0]).toHaveProperty('name');
     });
 });

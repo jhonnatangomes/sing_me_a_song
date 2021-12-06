@@ -8,5 +8,9 @@ router.post('/:id/upvote', recommendationsController.vote);
 router.post('/:id/downvote', recommendationsController.vote);
 router.get('/random', recommendationsController.getRecommendation);
 router.get('/top/:amount', recommendationsController.getTopRecommendations);
+router.get(
+    '/genres/:id/random',
+    recommendationsController.getRandomRecommendationByGenre
+);
 
 export default router;
