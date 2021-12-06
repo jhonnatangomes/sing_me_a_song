@@ -1,0 +1,29 @@
+#!/bin/bash
+
+source src/functions;
+
+DATABASE=$(cat src/database);
+DATABASE_TEST=$(cat src/database_test);
+
+echo "Checando status do postgres..." &&
+checkPostgres &&
+
+createRole &&
+
+restoreDatabase $DATABASE sing_me_a_song.sql &&
+
+restoreDatabase $DATABASE_TEST sing_me_a_song_test.sql &&
+
+echo "DB_USER=sing_me_a_song_role
+DB_PASSWORD=123456
+DB_PORT=5432
+DB_HOST=localhost
+DB_DATABASE=sing_me_a_song_development
+PORT=4000" > ../.env.development &&
+
+echo "DB_USER=sing_me_a_song_role
+DB_PASSWORD=123456
+DB_PORT=5432
+DB_HOST=localhost
+DB_DATABASE=sing_me_a_song_test
+PORT=4000" > ../.env.test;

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source src/functions;
+
+DATABASE=$(cat src/database);
+DATABASE_TEST=$(cat src/database_test);
+
+echo "Checando status do postgres..." &&
+checkPostgres &&
+
+echo "Destruindo banco de dados..." &&
+destroyDatabase $DATABASE &&
+
+echo "Destruindo banco de dados de teste..." && 
+destroyDatabase $DATABASE_TEST;
