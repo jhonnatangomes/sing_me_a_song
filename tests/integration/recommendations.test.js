@@ -56,6 +56,16 @@ describe('post /recommendations/:id/upvote', () => {
         await clearDatabase();
     });
 
+    it('returns 400 if amount is not a number', async () => {
+        const result = await agent.post('/recommendations/a/upvote');
+        expect(result.status).toEqual(400);
+    });
+
+    it('returns 400 if amount is less than 1', async () => {
+        const result = await agent.post('/recommendations/0/upvote');
+        expect(result.status).toEqual(400);
+    });
+
     it('returns 404 for a non-existent id in database', async () => {
         const result = await agent.post('/recommendations/1/upvote');
         expect(result.status).toEqual(404);
@@ -71,6 +81,16 @@ describe('post /recommendations/:id/upvote', () => {
 describe('post /recommendations/:id/downvote', () => {
     beforeAll(async () => {
         await clearDatabase();
+    });
+
+    it('returns 400 if amount is not a number', async () => {
+        const result = await agent.post('/recommendations/a/downvote');
+        expect(result.status).toEqual(400);
+    });
+
+    it('returns 400 if amount is less than 1', async () => {
+        const result = await agent.post('/recommendations/0/downvote');
+        expect(result.status).toEqual(400);
     });
 
     it('returns 404 for a non-existent id in database', async () => {

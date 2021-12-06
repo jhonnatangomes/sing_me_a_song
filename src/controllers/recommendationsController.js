@@ -28,6 +28,10 @@ async function vote(req, res, next) {
     try {
         const { id } = req.params;
 
+        if (Number.isNaN(Number(id)) || Number(id) < 1) {
+            return res.sendStatus(400);
+        }
+
         if (req.url.includes('upvote')) {
             await recommendationServices.vote(id, '+');
         } else {
