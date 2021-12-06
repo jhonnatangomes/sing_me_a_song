@@ -44,6 +44,10 @@ async function changeScore({ name, youtubeLink, score }) {
 
 async function deleteRecommendation(id) {
     await connection.query(
+        `DELETE FROM recommendations_genres WHERE recommendation_id = $1`,
+        [id]
+    );
+    await connection.query(
         `
         DELETE FROM recommendations WHERE id = $1
     `,
