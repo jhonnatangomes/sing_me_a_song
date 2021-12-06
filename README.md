@@ -1,6 +1,6 @@
 # Sing me a song
 
-Sing me a song is a RESTful api developed with node.js. In it you can suggest songs recommendations and <span style="color: #448361;">GET</span> random recommendations based on the score the recommendations have.
+Sing me a song is a RESTful api developed with node.js. In it you can suggest songs recommendations and get random recommendations based on the score the recommendations have.
 
 ### How to run
 
