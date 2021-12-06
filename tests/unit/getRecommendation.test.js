@@ -1,6 +1,7 @@
 import * as recommendationsServices from '../../src/services/recommendationsServices.js';
 import * as recommendationsRepositories from '../../src/repositories/recommendationsRepositories.js';
 import * as helpersServices from '../../src/services/helpersServices.js';
+import * as genresServices from '../../src/services/genresServices.js';
 
 const sut = recommendationsServices;
 jest.mock('../../src/helpers/getRandomInt.js');
@@ -56,5 +57,36 @@ describe('get top recommendations', () => {
         getTopRecommendations.mockImplementationOnce(() => recommendations);
         const result = await sut.getTopRecommendations();
         expect(result).toEqual(recommendations);
+    });
+});
+
+describe('get random recommendation by genre', () => {
+    const getSongsByGenreId = jest.spyOn(genresServices, 'getSongsByGenreId');
+    const getRecommendation = jest.spyOn(helpersServices, 'getRecommendation');
+
+    it('returns recommendation by genre', async () => {
+        const recommendations = {
+            id: 1,
+            name: 'Forró',
+            recommendations: [
+                {
+                    id: 2,
+                    name: 'Gangnam Style',
+                },
+                {
+                    id: 3,
+                    name: 'Take me to church',
+                },
+            ],
+        };
+        getSongsByGenreId.mockImplementation(() => recommendations);
+        getRecommendation.mockImplementation(
+            () => recommendations.recommendations[1]
+        );
+        const result = await sut.getRandomRecommendationByGenre();
+        expect(result).toEqual(recommendations.recommendations[1]);
+        expect(getRecommendation).toHaveBeenCalledWith(
+            recommendations.recommendations
+        );
     });
 });
