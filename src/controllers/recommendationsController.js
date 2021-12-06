@@ -80,7 +80,7 @@ async function getRandomRecommendationByGenre(req, res, next) {
         }
         const recommendation =
             await recommendationServices.getRandomRecommendationByGenre(
-                genreId
+                Number(genreId)
             );
         return res.send(recommendation);
     } catch (error) {
