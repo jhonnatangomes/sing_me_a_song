@@ -1,5 +1,5 @@
-import faker from 'faker';
+import faker from 'faker-br';
 
-const stringFactory = () => faker.datatype.string();
+const stringFactory = () => faker.random.word();
 
 export default stringFactory;
