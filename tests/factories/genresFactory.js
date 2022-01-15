@@ -1,4 +1,4 @@
-import faker from 'faker';
+import faker from 'faker-br';
 import connection from '../../src/database/connection.js';
 
 async function createGenre() {

@@ -1,18 +1,18 @@
-import faker from 'faker';
+import faker from 'faker-br';
 import connection from '../../src/database/connection.js';
 import { createGenre } from './genresFactory.js';
 
 function recommendationsIncorrectFactory() {
     return {
-        name: faker.datatype.number(),
-        youtubeLink: faker.datatype.string(),
-        genres: [faker.datatype.number()],
+        name: faker.random.number(),
+        youtubeLink: faker.random.word(),
+        genres: [faker.random.number()],
     };
 }
 
 function recommendationsFactory(genresIds) {
     return {
-        name: faker.datatype.string(),
+        name: faker.random.word(),
         youtubeLink: `https://www.youtube.com/watch?v=${faker.random.alphaNumeric(
             12
         )}`,
@@ -22,11 +22,11 @@ function recommendationsFactory(genresIds) {
 
 function nonExistentGenreRecommendationFactory() {
     return {
-        name: faker.datatype.string(),
+        name: faker.random.word(),
         youtubeLink: `https://www.youtube.com/watch?v=${faker.random.alphaNumeric(
             12
         )}`,
-        genresIds: [faker.datatype.number()],
+        genresIds: [faker.random.number()],
     };
 }
 
@@ -34,7 +34,7 @@ async function createRecommendation() {
     const recommendation = {
         name: faker.name.findName(),
         youtubeLink: faker.internet.url(),
-        score: faker.datatype.number(),
+        score: faker.random.number(),
     };
     const result = await connection.query(
         `INSERT INTO recommendations (name, youtube_link, score)
